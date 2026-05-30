@@ -97,8 +97,11 @@
   </div>
 
   <!-- Top Rated Hospitals -->
-  <div class="section-header"><span class="section-title">⭐ Top Rated Hospitals</span></div>
-  <div id="home-top-hospitals" style="padding:0 16px 16px"></div>
+  <div class="section-header">
+    <span class="section-title">⭐ Top Rated Hospitals</span>
+    <span class="section-link" id="home-top-see-all" style="display:none" onclick="showView('view-search');updateNav('search')">See all</span>
+  </div>
+  <div class="h-scroll" id="home-top-hospitals"></div>
 
   <!-- Floating Action Button for Quick Appointment Booking -->
   <button class="fab-btn" onclick="openQuickBookModal()" title="Book Appointment">

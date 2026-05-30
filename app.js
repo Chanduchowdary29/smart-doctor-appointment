@@ -619,7 +619,14 @@ async function loadHome() {
       const topEl = document.getElementById('home-top-hospitals');
       if (topEl) {
         const sorted = [..._allHospitals].sort((a, b) => (b.avg_rating || 0) - (a.avg_rating || 0));
-        topEl.innerHTML = sorted.map(h => hospitalCardHtml(h, `openHospital(${h.id})`)).join('');
+        const displayList = sorted.slice(0, 3);
+        topEl.innerHTML = displayList.map(h => hospitalCardHtml(h, `openHospital(${h.id})`)).join('');
+
+        // Show "See All" link if there are more than 3 hospitals
+        const seeAllBtn = document.getElementById('home-top-see-all');
+        if (seeAllBtn) {
+          seeAllBtn.style.display = sorted.length > 3 ? 'inline-block' : 'none';
+        }
       }
     } catch (e) {
       hospEl.innerHTML = emptyState('⚠️', 'Failed to load', e.message || 'Could not load hospitals');
