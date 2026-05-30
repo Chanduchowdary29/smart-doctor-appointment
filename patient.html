@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>HospiQ — Patient</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="loader"><div class="spinner"></div></div>
+
+<!-- Global Sticky Top Navbar -->
+<header class="top-navbar">
+  <div class="navbar-container">
+    <div class="navbar-logo" onclick="showView('view-home');updateNav('home');loadHome()">
+      <img src="images/app_logo.png" alt="HospiQ" onerror="this.style.display='none'">
+      <span>HospiQ</span>
+    </div>
+    <nav class="navbar-menu">
+      <a class="nav-link active" id="nav-home" onclick="showView('view-home');updateNav('home');loadHome()">
+        <i class="fas fa-home"></i> <span>Home</span>
+      </a>
+      <a class="nav-link" id="nav-search" onclick="showView('view-search');updateNav('search')">
+        <i class="fas fa-search"></i> <span>Search</span>
+      </a>
+      <a class="nav-link" id="nav-appointments" onclick="showView('view-appointments');updateNav('appointments');loadAppointments()">
+        <i class="fas fa-calendar-check"></i> <span>Appointments</span>
+      </a>
+      <a class="nav-link" id="nav-notifications" onclick="showView('view-notifications');updateNav('notifications');loadPatientNotifications()">
+        <i class="fas fa-bell"></i> <span>Alerts</span>
+        <span class="notif-badge" id="nb-nav" style="display:none">0</span>
+      </a>
+      <a class="nav-link" id="nav-profile" onclick="showView('view-profile');updateNav('profile');loadProfile()">
+        <i class="fas fa-user"></i> <span>Profile</span>
+      </a>
+    </nav>
+    <div class="navbar-right">
+      <button class="btn-icon notif-btn" onclick="showView('view-notifications');updateNav('notifications');loadPatientNotifications()">
+        <i class="fas fa-bell"></i>
+        <span class="notif-badge" id="nb-notifications" style="display:none">0</span>
+      </button>
+      <div id="home-avatar" class="navbar-avatar" onclick="showView('view-profile');updateNav('profile');loadProfile()" style="cursor:pointer"></div>
+    </div>
+  </div>
+</header>
+
+<!-- ── VIEWS ── -->
+
+<!-- VIEW: HOME -->
+<section id="view-home" class="view active">
+
+  <div class="home-greeting">
+    <div class="home-greeting-name" id="home-greeting">Good morning 👋</div>
+    <div class="home-greeting-sub">Find and book doctors near you</div>
+  </div>
+
+  <!-- Search bar (tappable) -->
+  <div class="search-bar" onclick="showView('view-search');updateNav('search');setTimeout(()=>document.getElementById('search-input').focus(),100)">
+    <i class="fas fa-search"></i>
+    <input type="text" placeholder="Search hospitals, doctors..." readonly>
+    <i class="fas fa-filter" style="color:var(--teal)"></i>
+  </div>
+
+  <!-- Near You -->
+  <div class="section-header">
+    <span class="section-title">🏥 Hospitals Near You</span>
+    <span class="section-link" onclick="showView('view-search');updateNav('search')">See all</span>
+  </div>
+  <div id="home-loc-banner" style="padding:0 16px 6px;font-size:11px;color:var(--gray)">📍 Loading location...</div>
+  <div class="h-scroll" id="home-hospitals"><div class="shimmer-card" style="height:200px;min-width:240px"></div><div class="shimmer-card" style="height:200px;min-width:240px"></div></div>
+
+  <!-- Recent Appointments -->
+  <div class="section-header">
+    <span class="section-title">📅 Recent Appointments</span>
+    <span class="section-link" onclick="showView('view-appointments');updateNav('appointments')">See all</span>
+  </div>
+  <div class="h-scroll" id="home-appts"></div>
+
+  <!-- Doctor's Advice -->
+  <div id="home-advice-section" style="display:none">
+    <div class="section-header"><span class="section-title">💊 Doctor's Advice</span></div>
+    <div id="home-advice" style="padding:0 16px 16px"></div>
+  </div>
+
+  <!-- Browse by Specialty -->
+  <div class="section-header"><span class="section-title">🔍 Browse by Specialty</span></div>
+  <div class="specialty-grid" style="padding:4px 16px 16px">
+    <div class="specialty-tile" onclick="showView('view-search');updateNav('search')"><div class="specialty-icon">🫀</div><span class="specialty-label">Cardiology</span></div>
+    <div class="specialty-tile" onclick="showView('view-search');updateNav('search')"><div class="specialty-icon">👁</div><span class="specialty-label">Ophthalmology</span></div>
+    <div class="specialty-tile" onclick="showView('view-search');updateNav('search')"><div class="specialty-icon">❤️</div><span class="specialty-label">Oncology</span></div>
+    <div class="specialty-tile" onclick="showView('view-search');updateNav('search')"><div class="specialty-icon">🦷</div><span class="specialty-label">Dental</span></div>
+    <div class="specialty-tile" onclick="showView('view-search');updateNav('search')"><div class="specialty-icon">🧠</div><span class="specialty-label">Neurology</span></div>
+    <div class="specialty-tile" onclick="showView('view-search');updateNav('search')"><div class="specialty-icon">🧘</div><span class="specialty-label">Psychiatry</span></div>
+    <div class="specialty-tile" onclick="showView('view-search');updateNav('search')"><div class="specialty-icon">👶</div><span class="specialty-label">Pediatrics</span></div>
+    <div class="specialty-tile" onclick="showView('view-search');updateNav('search')"><div class="specialty-icon">➕</div><span class="specialty-label">More</span></div>
+  </div>
+
+  <!-- Top Rated Hospitals -->
+  <div class="section-header"><span class="section-title">⭐ Top Rated Hospitals</span></div>
+  <div id="home-top-hospitals" style="padding:0 16px 16px"></div>
+
+  <!-- Floating Action Button for Quick Appointment Booking -->
+  <button class="fab-btn" onclick="openQuickBookModal()" title="Book Appointment">
+    <i class="fas fa-plus"></i>
+  </button>
+</section>
+
+<!-- VIEW: HOSPITAL DETAIL -->
+<section id="view-hospital-detail" class="view">
+  <div class="top-bar">
+    <button class="btn-icon" id="hosp-back-btn"><i class="fas fa-arrow-left"></i></button>
+    <span style="font-weight:700;font-size:16px">Hospital Details</span>
+    <div style="width:36px"></div>
+  </div>
+  <div id="hosp-detail-content"></div>
+  <div style="height:80px"></div>
+  <div style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;padding:12px 16px;background:var(--white);border-top:1px solid var(--border);z-index:100">
+    <button class="btn-primary" onclick="bookFromHospital()">Book an Appointment</button>
+  </div>
+</section>
+
+<!-- VIEW: DOCTOR PROFILE -->
+<section id="view-doctor-profile" class="view">
+  <div class="top-bar">
+    <button class="btn-icon" id="doc-back-btn"><i class="fas fa-arrow-left"></i></button>
+    <span style="font-weight:700;font-size:16px">Doctor Profile</span>
+    <div style="width:36px"></div>
+  </div>
+  <div id="doc-profile-content"></div>
+  <div style="height:80px"></div>
+</section>
+
+<!-- VIEW: APPOINTMENT CONFIRM -->
+<section id="view-appointment-confirm" class="view">
+  <div class="confirm-view">
+    <div class="confirm-check"><i class="fas fa-check"></i></div>
+    <h2 class="confirm-title">Appointment Confirmed!</h2>
+    <p class="confirm-sub">Your appointment request has been sent.<br>You'll be notified when accepted.</p>
+    <div class="confirm-card" id="confirm-details"></div>
+    <div class="confirm-actions">
+      <button class="btn-primary" onclick="showView('view-appointments');updateNav('appointments');loadAppointments()">View Appointments</button>
+      <button class="btn-secondary" onclick="showView('view-home');updateNav('home');loadHome()">Go Home</button>
+    </div>
+  </div>
+</section>
+
+<!-- VIEW: APPOINTMENTS -->
+<section id="view-appointments" class="view">
+  <div class="top-bar">
+    <div class="top-bar-logo"><span>My Appointments</span></div>
+    <button class="btn-icon" onclick="loadAppointments()"><i class="fas fa-refresh"></i></button>
+  </div>
+  <div class="filter-row" id="appt-filters">
+    <button class="chip active" onclick="filterAppts('all', this)">All</button>
+    <button class="chip" onclick="filterAppts('upcoming', this)">Upcoming</button>
+    <button class="chip" onclick="filterAppts('completed', this)">Completed</button>
+    <button class="chip" onclick="filterAppts('cancelled', this)">Cancelled</button>
+  </div>
+  <div id="appt-list" style="padding:12px 16px"></div>
+</section>
+
+<!-- VIEW: SEARCH -->
+<section id="view-search" class="view">
+  <div class="top-bar">
+    <div class="top-bar-logo"><span>Search</span></div>
+  </div>
+  <div class="search-bar" style="margin-top:12px">
+    <i class="fas fa-search"></i>
+    <input type="text" id="search-input" placeholder="Search hospitals..." oninput="doSearch(this.value)">
+    <button class="btn-icon" onclick="openModal('filter-modal')"><i class="fas fa-filter" style="color:var(--teal)"></i></button>
+  </div>
+  <div id="search-results">
+    <!-- Default: specialty grid -->
+    <div class="section-header"><span class="section-title">Browse by Specialty</span></div>
+    <div class="specialty-grid" style="padding:4px 16px 16px">
+      <div class="specialty-tile" onclick="filterBySpec('Cardiology')"><div class="specialty-icon">🫀</div><span class="specialty-label">Cardiology</span></div>
+      <div class="specialty-tile" onclick="filterBySpec('Ophthalmology')"><div class="specialty-icon">👁</div><span class="specialty-label">Ophthalmology</span></div>
+      <div class="specialty-tile" onclick="filterBySpec('Oncology')"><div class="specialty-icon">❤️</div><span class="specialty-label">Oncology</span></div>
+      <div class="specialty-tile" onclick="filterBySpec('Dental')"><div class="specialty-icon">🦷</div><span class="specialty-label">Dental</span></div>
+      <div class="specialty-tile" onclick="filterBySpec('Neurology')"><div class="specialty-icon">🧠</div><span class="specialty-label">Neurology</span></div>
+      <div class="specialty-tile" onclick="filterBySpec('Psychiatry')"><div class="specialty-icon">🧘</div><span class="specialty-label">Psychiatry</span></div>
+      <div class="specialty-tile" onclick="filterBySpec('Pediatrics')"><div class="specialty-icon">👶</div><span class="specialty-label">Pediatrics</span></div>
+      <div class="specialty-tile"><div class="specialty-icon">➕</div><span class="specialty-label">More</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- VIEW: NOTIFICATIONS -->
+<section id="view-notifications" class="view">
+  <div class="top-bar">
+    <div class="top-bar-logo"><span>Notifications</span></div>
+    <button class="btn-icon" onclick="loadPatientNotifications()"><i class="fas fa-refresh"></i></button>
+  </div>
+  <div id="notif-list"></div>
+</section>
+
+<!-- VIEW: PROFILE -->
+<section id="view-profile" class="view">
+  <div id="profile-content"></div>
+</section>
+
+<!-- ── MODALS ── -->
+
+<!-- Appointment Detail Modal -->
+<div id="appt-modal" class="modal-overlay" onclick="if(event.target===this)closeModal('appt-modal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div id="appt-modal-content"></div>
+  </div>
+</div>
+
+<!-- Filter Modal -->
+<div id="filter-modal" class="modal-overlay" onclick="if(event.target===this)closeModal('filter-modal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <h3 class="modal-title" style="margin:0">Filter Hospitals</h3>
+      <button class="btn-ghost" onclick="resetFilters()">Reset</button>
+    </div>
+    <p class="form-label" style="margin-bottom:10px">Hospital Type</p>
+    <div class="filter-row" style="padding:0;flex-wrap:wrap;gap:8px;margin-bottom:20px" id="type-filter-chips">
+      <button class="chip active" data-type="all" onclick="setTypeFilter('all',this)">All</button>
+      <button class="chip" data-type="Government" onclick="setTypeFilter('Government',this)">Government</button>
+      <button class="chip" data-type="Private" onclick="setTypeFilter('Private',this)">Private</button>
+      <button class="chip" data-type="Clinic" onclick="setTypeFilter('Clinic',this)">Clinic</button>
+      <button class="chip" data-type="Multispecialty" onclick="setTypeFilter('Multispecialty',this)">Multispecialty</button>
+    </div>
+    <p class="form-label" style="margin-bottom:10px">Minimum Rating</p>
+    <div class="filter-row" style="padding:0;flex-wrap:wrap;gap:8px;margin-bottom:24px" id="rating-filter-chips">
+      <button class="chip active" data-rating="0" onclick="setRatingFilter(0,this)">Any</button>
+      <button class="chip" data-rating="1" onclick="setRatingFilter(1,this)">1★+</button>
+      <button class="chip" data-rating="2" onclick="setRatingFilter(2,this)">2★+</button>
+      <button class="chip" data-rating="3" onclick="setRatingFilter(3,this)">3★+</button>
+      <button class="chip" data-rating="4" onclick="setRatingFilter(4,this)">4★+</button>
+    </div>
+    <button class="btn-primary" onclick="applyFilters()">Apply Filters</button>
+  </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div id="edit-profile-modal" class="modal-overlay" onclick="if(event.target===this)closeModal('edit-profile-modal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <h3 class="modal-title">Edit Profile</h3>
+    <div style="display:flex;justify-content:center;margin-bottom:16px">
+      <div style="position:relative;cursor:pointer" onclick="document.getElementById('ep-photo').click()">
+        <div id="ep-avatar-preview"></div>
+        <div style="position:absolute;bottom:0;right:0;background:var(--teal);color:#fff;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px"><i class="fas fa-camera"></i></div>
+      </div>
+    </div>
+    <input type="file" id="ep-photo" style="display:none" accept="image/*" onchange="previewEpPhoto(this)">
+    <div class="form-group">
+      <label class="form-label">Full Name</label>
+      <input type="text" id="ep-name" class="form-input" placeholder="Your name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Phone</label>
+      <input type="text" id="ep-phone" class="form-input" placeholder="Phone number">
+    </div>
+    <button class="btn-primary mt-12" onclick="saveEditProfile()">Save Changes</button>
+  </div>
+</div>
+
+<!-- Health Reports Modal -->
+<div id="reports-modal" class="modal-overlay" onclick="if(event.target===this)closeModal('reports-modal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <h3 class="modal-title">My Health Reports</h3>
+    <div id="reports-content"></div>
+  </div>
+</div>
+
+<!-- Quick Book Appointment Modal -->
+<div id="quick-book-modal" class="modal-overlay" onclick="if(event.target===this)closeModal('quick-book-modal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <h3 class="modal-title">Quick Book Appointment</h3>
+    <div class="form-group" style="position:relative">
+      <label class="form-label">Search Doctor by Name or Specialty</label>
+      <div class="search-bar" style="margin:8px 0 12px">
+        <i class="fas fa-search"></i>
+        <input type="text" id="qb-search-input" placeholder="Type doctor name or specialty..." oninput="qbSearchDoctors(this.value)">
+      </div>
+      <div id="qb-search-dropdown" class="search-dropdown" style="width:100%;top:64px"></div>
+    </div>
+    <div id="qb-default-section">
+      <p class="form-label" style="margin-bottom:8px">Suggested Doctors</p>
+      <div id="qb-doctors-list" style="display:flex;flex-direction:column;gap:8px;max-height:240px;overflow-y:auto">
+        <p style="color:var(--gray);font-size:13px;padding:8px 0">Loading available doctors...</p>
+      </div>
+    </div>
+    <button class="btn-secondary mt-16" onclick="closeModal('quick-book-modal')">Cancel</button>
+  </div>
+</div>
+
+<!-- Booking Symptoms Modal -->
+<div id="booking-symptoms-modal" class="modal-overlay" onclick="if(event.target===this)closeModal('booking-symptoms-modal')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <h3 class="modal-title">Describe Symptoms 🩺</h3>
+    <p style="font-size:13px;color:var(--gray);line-height:1.5;margin-bottom:16px">
+      Please tell us more about your current symptoms or concerns to help the doctor prepare for your visit.
+    </p>
+    <div class="form-group">
+      <label class="form-label">Reason for Visit / Illness Name <span style="color:var(--coral)">*</span></label>
+      <input type="text" id="book-illness-name" class="form-input" placeholder="e.g. Chest Discomfort, Migraine, Cough" oninput="validateSymptomForm()">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Symptoms & Description</label>
+      <textarea id="book-illness-desc" class="form-input" rows="3" placeholder="Describe how long you've had it, severity, or triggers..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Medications / Precautions Taken</label>
+      <input type="text" id="book-precautions" class="form-input" placeholder="e.g. Aspirin, Cough syrup, warm fluids">
+    </div>
+    <div style="display:flex;gap:12px;margin-top:16px">
+      <button class="btn-secondary" style="flex:1" onclick="closeModal('booking-symptoms-modal')">Cancel</button>
+      <button class="btn-primary" id="btn-submit-booking" style="flex:1" onclick="submitBookingFlow()" disabled style="opacity:0.5">Book Now</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (!requirePatient()) return;
+  startNotifPolling();
+  loadHome();
+
+  // hosp-back-btn: go back to home
+  document.getElementById('hosp-back-btn').onclick = () => {
+    window._prevView = null;
+    showView('view-home');
+    updateNav('home');
+  };
+
+  // doc-back-btn: go back to hospital detail if we came from there, else home
+  document.getElementById('doc-back-btn').onclick = () => {
+    const prev = window._prevView;
+    window._prevView = null;
+    if (prev === 'view-hospital-detail' && _currentHospitalId) {
+      showView('view-hospital-detail');
+    } else {
+      showView('view-home');
+      updateNav('home');
+    }
+  };
+});
+</script>
+</body>
+</html>

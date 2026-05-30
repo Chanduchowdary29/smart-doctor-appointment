@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>HospiQ</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+<style>
+body { padding-bottom: 0; }
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader"><div class="spinner"></div></div>
+
+<!-- VIEW: SPLASH -->
+<section id="view-splash" class="view active">
+  <img src="images/app_logo.png" alt="HospiQ Logo" onerror="this.style.display='none'">
+  <h1>HospiQ</h1>
+  <p>Your Health, Simplified</p>
+</section>
+
+<!-- VIEW: ONBOARDING -->
+<section id="view-onboarding" class="view">
+  <img src="images/doctor_standing.png" alt="Doctor" onerror="this.style.background='#E0F4F4'">
+  <h2>Your Health,<br>Simplified</h2>
+  <p>Connect with top doctors, book appointments, and manage your health — all in one place.</p>
+  <div class="onboard-actions">
+    <button class="btn-primary" onclick="showView('view-patient-signup')">Sign up as Patient</button>
+    <button class="btn-secondary" onclick="showView('view-doctor-register')">Sign up as Doctor</button>
+  </div>
+  <p class="login-link">Already have an account? <span onclick="showView('view-login')">Log in</span></p>
+</section>
+
+<!-- VIEW: LOGIN -->
+<section id="view-login" class="view">
+  <div class="auth-page">
+    <div class="auth-header">
+      <img src="images/app_logo.png" alt="HospiQ" onerror="this.style.display='none'">
+      <h1>Welcome back!</h1>
+    </div>
+    <p class="auth-sub">Log in to continue with HospiQ</p>
+    <img src="images/patient_booking.png" alt="" class="auth-img" onerror="this.style.display='none'">
+
+    <div class="form-group">
+      <label class="form-label">Email address</label>
+      <input type="email" id="login-email" class="form-input" placeholder="you@email.com" autocomplete="email">
+      <p class="field-error" id="login-email-err">Please enter a valid email</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div class="input-wrap">
+        <input type="password" id="login-password" class="form-input" placeholder="Your password" autocomplete="current-password">
+        <button class="eye-btn" type="button" onclick="togglePass('login-password', this)"><i class="far fa-eye"></i></button>
+      </div>
+      <p class="field-error" id="login-pass-err">Password is required</p>
+    </div>
+
+    <button class="btn-primary mt-16" onclick="doLogin()">Log In</button>
+    <p class="auth-footer">Don't have an account? Sign up as <span onclick="showView('view-patient-signup')">Patient</span> or <span onclick="showView('view-doctor-register')">Doctor</span></p>
+  </div>
+</section>
+
+<!-- VIEW: PATIENT SIGNUP -->
+<section id="view-patient-signup" class="view">
+  <div class="auth-page">
+    <button class="back-btn" onclick="showView('view-login')"><i class="fas fa-arrow-left"></i> Back</button>
+    <h1 style="font-size:22px;font-weight:800;margin-bottom:6px">Create Patient Account</h1>
+    <p class="auth-sub">Fill in your details to get started</p>
+
+    <div class="form-group">
+      <label class="form-label">Full Name</label>
+      <input type="text" id="ps-name" class="form-input" placeholder="John Doe">
+      <p class="field-error" id="ps-name-err">Name is required</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email address</label>
+      <input type="email" id="ps-email" class="form-input" placeholder="you@email.com">
+      <p class="field-error" id="ps-email-err">Valid email required</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Phone number</label>
+      <input type="tel" id="ps-phone" class="form-input" placeholder="10-digit number" maxlength="10">
+      <p class="field-error" id="ps-phone-err">Enter a valid 10-digit phone</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div class="input-wrap">
+        <input type="password" id="ps-password" class="form-input" placeholder="Min 8 characters">
+        <button class="eye-btn" type="button" onclick="togglePass('ps-password', this)"><i class="far fa-eye"></i></button>
+      </div>
+      <p class="field-error" id="ps-pass-err">Password must be at least 8 characters</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Confirm Password</label>
+      <div class="input-wrap">
+        <input type="password" id="ps-confirm" class="form-input" placeholder="Re-enter password">
+        <button class="eye-btn" type="button" onclick="togglePass('ps-confirm', this)"><i class="far fa-eye"></i></button>
+      </div>
+      <p class="field-error" id="ps-confirm-err">Passwords do not match</p>
+    </div>
+
+    <button class="btn-primary mt-16" onclick="doPatientSignup()">Create Account</button>
+    <p class="auth-footer">Already have an account? <span onclick="showView('view-login')">Log in</span></p>
+  </div>
+</section>
+
+<!-- VIEW: DOCTOR REGISTER -->
+<section id="view-doctor-register" class="view">
+  <div class="auth-page">
+    <button class="back-btn" onclick="showView('view-login')"><i class="fas fa-arrow-left"></i> Back</button>
+    <h1 style="font-size:22px;font-weight:800;margin-bottom:6px">Doctor Registration</h1>
+    <p class="auth-sub">Complete all 3 steps to register</p>
+
+    <!-- Step indicators -->
+    <div class="step-indicators" id="step-indicators">
+      <div class="step-dot active" id="step-dot-1">1</div>
+      <div class="step-line" id="step-line-1"></div>
+      <div class="step-dot" id="step-dot-2">2</div>
+      <div class="step-line" id="step-line-2"></div>
+      <div class="step-dot" id="step-dot-3">3</div>
+    </div>
+
+    <!-- Step 1: Personal Info -->
+    <div class="step-form active" id="dr-step-1">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" id="dr-name" class="form-input" placeholder="Dr. John Doe">
+        <p class="field-error" id="dr-name-err">Name is required</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email address</label>
+        <input type="email" id="dr-email" class="form-input" placeholder="doctor@email.com">
+        <p class="field-error" id="dr-email-err">Valid email required</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Phone number</label>
+        <input type="tel" id="dr-phone" class="form-input" placeholder="10-digit number" maxlength="10">
+        <p class="field-error" id="dr-phone-err">Enter a valid 10-digit phone</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-wrap">
+          <input type="password" id="dr-password" class="form-input" placeholder="Min 8 characters">
+          <button class="eye-btn" type="button" onclick="togglePass('dr-password', this)"><i class="far fa-eye"></i></button>
+        </div>
+        <p class="field-error" id="dr-pass-err">Password must be at least 8 characters</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirm Password</label>
+        <div class="input-wrap">
+          <input type="password" id="dr-confirm" class="form-input" placeholder="Re-enter password">
+          <button class="eye-btn" type="button" onclick="togglePass('dr-confirm', this)"><i class="far fa-eye"></i></button>
+        </div>
+        <p class="field-error" id="dr-confirm-err">Passwords do not match</p>
+      </div>
+      <button class="btn-primary mt-16" onclick="drStep1Next()">Next <i class="fas fa-arrow-right" style="margin-left:6px"></i></button>
+    </div>
+
+    <!-- Step 2: Professional Info -->
+    <div class="step-form" id="dr-step-2">
+      <div class="form-group">
+        <label class="form-label">License Number</label>
+        <input type="text" id="dr-license" class="form-input" placeholder="MCI/State license number">
+        <p class="field-error" id="dr-license-err">License number required</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Specialization</label>
+        <select id="dr-spec" class="form-input">
+          <option value="">Select specialization</option>
+          <option>Cardiology</option><option>Neurology</option>
+          <option>Orthopedics</option><option>Pediatrics</option>
+          <option>Oncology</option><option>Dermatology</option>
+          <option>Psychiatry</option><option>Ophthalmology</option>
+          <option>ENT</option><option>Dental</option>
+          <option>General Medicine</option><option>Surgery</option>
+          <option>Gynecology</option><option>Urology</option>
+          <option>Radiology</option><option>Other</option>
+        </select>
+        <p class="field-error" id="dr-spec-err">Specialization required</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Years of Experience</label>
+        <input type="number" id="dr-exp" class="form-input" placeholder="e.g. 5" min="0" max="60">
+        <p class="field-error" id="dr-exp-err">Experience required</p>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bio</label>
+        <textarea id="dr-bio" class="form-input" placeholder="Brief professional bio..." rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Languages Spoken</label>
+        <input type="text" id="dr-langs" class="form-input" placeholder="e.g. English, Hindi, Tamil" value="English">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Profile Photo</label>
+        <input type="file" id="dr-photo" class="form-input" accept="image/*" onchange="previewPhoto(this, 'dr-photo-preview')" style="padding:8px">
+        <img id="dr-photo-preview" class="photo-preview-circle mt-8">
+      </div>
+      <div class="step-actions">
+        <button class="btn-secondary" style="flex:0.4" onclick="drGoStep(1)"><i class="fas fa-arrow-left"></i></button>
+        <button class="btn-primary" style="flex:1" onclick="drStep2Next()">Next <i class="fas fa-arrow-right" style="margin-left:6px"></i></button>
+      </div>
+    </div>
+
+    <!-- Step 3: Hospital -->
+    <div class="step-form" id="dr-step-3">
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <button id="hosp-join-btn" class="chip active" onclick="drToggleHospMode('join')">Join Existing Hospital</button>
+        <button id="hosp-new-btn" class="chip" onclick="drToggleHospMode('new')">Create New Hospital</button>
+      </div>
+
+      <!-- Join existing -->
+      <div id="dr-hosp-join">
+        <div class="form-group" style="position:relative">
+          <label class="form-label">Search Hospital</label>
+          <input type="text" id="dr-hosp-search" class="form-input" placeholder="Type hospital name..." oninput="drSearchHospitals(this.value)">
+          <div id="dr-hosp-dropdown" class="search-dropdown"></div>
+          <input type="hidden" id="dr-hosp-id">
+          <p class="field-error" id="dr-hosp-err">Please select a hospital</p>
+        </div>
+        <div id="dr-hosp-selected" style="display:none" class="card" style="background:var(--teal-light)">
+          <p class="text-teal font-bold" id="dr-hosp-selected-name"></p>
+        </div>
+      </div>
+
+      <!-- Create new -->
+      <div id="dr-hosp-new" style="display:none">
+        <div class="form-group">
+          <label class="form-label">Hospital Name</label>
+          <input type="text" id="nh-name" class="form-input" placeholder="Hospital name">
+          <p class="field-error" id="nh-name-err">Name required</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Address</label>
+          <input type="text" id="nh-address" class="form-input" placeholder="Full address">
+        </div>
+        <div class="form-group">
+          <label class="form-label">City</label>
+          <input type="text" id="nh-city" class="form-input" placeholder="City">
+          <p class="field-error" id="nh-city-err">City required</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Hospital Type</label>
+          <select id="nh-type" class="form-input">
+            <option value="">Select type</option>
+            <option>Government</option><option>Private</option>
+            <option>Clinic</option><option>Multispecialty</option>
+          </select>
+          <p class="field-error" id="nh-type-err">Type required</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Hospital Photo</label>
+          <input type="file" id="nh-photo" class="form-input" accept="image/*" style="padding:8px">
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn-secondary" style="flex:0.4" onclick="drGoStep(2)"><i class="fas fa-arrow-left"></i></button>
+        <button class="btn-primary" style="flex:1" onclick="doDoctorRegister()">Register <i class="fas fa-check" style="margin-left:6px"></i></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  initSplash();
+});
+</script>
+</body>
+</html>
