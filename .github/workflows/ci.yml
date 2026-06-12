@@ -1,0 +1,43 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: package-lock.json
+
+    - name: Install Main Project Dependencies
+      run: npm ci
+
+    - name: Install Selenium Testing Dependencies
+      run: npm ci
+      working-directory: ./testing/hospiq-selenium-tests
+
+    - name: Install Appium Testing Dependencies
+      run: npm ci
+      working-directory: ./testing/appium-tests
+
+    # Note: Live UI tests are disabled here by default because GitHub runners are headless
+    # and require virtual displays to run visual tests properly.
+    # - name: Run Selenium Tests (Headless Mode Required)
+    #   run: node test-runner.js
+    #   working-directory: ./testing/hospiq-selenium-tests
