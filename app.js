@@ -2,8 +2,8 @@
 // CONFIG — Change BASE_IP to match your server
 // ═══════════════════════════════════════════════════════
 const BASE_IP = 'localhost';
-const API_BASE = `http://${BASE_IP}/hospiq/`;
-const IMAGE_BASE = `http://${BASE_IP}/hospiq/`;
+const API_BASE = 'https://giant-towns-tap.loca.lt/hospiq/';
+const IMAGE_BASE = 'https://giant-towns-tap.loca.lt/hospiq/';
 
 // ═══════════════════════════════════════════════════════
 // SESSION MANAGER
