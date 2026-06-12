@@ -22,22 +22,12 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: package-lock.json
-
-    - name: Install Main Project Dependencies
-      run: npm ci
+        # Removed global npm cache to prevent errors since there is no package.json in the root directory
 
     - name: Install Selenium Testing Dependencies
-      run: npm ci
+      run: npm install
       working-directory: ./testing/hospiq-selenium-tests
 
     - name: Install Appium Testing Dependencies
-      run: npm ci
+      run: npm install
       working-directory: ./testing/appium-tests
-
-    # Note: Live UI tests are disabled here by default because GitHub runners are headless
-    # and require virtual displays to run visual tests properly.
-    # - name: Run Selenium Tests (Headless Mode Required)
-    #   run: node test-runner.js
-    #   working-directory: ./testing/hospiq-selenium-tests
