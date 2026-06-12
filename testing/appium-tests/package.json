@@ -1,0 +1,24 @@
+{
+  "name": "hospiq-appium-tests",
+  "version": "1.0.0",
+  "description": "Appium E2E tests for Hospiq Android mobile application",
+  "main": "test-runner.js",
+  "scripts": {
+    "test": "node test-runner.js"
+  },
+  "dependencies": {
+    "appium": "^2.11.2",
+    "webdriverio": "^8.36.0",
+    "xlsx": "^0.18.5"
+  },
+  "private": true,
+  "devDependencies": {
+    "appium-uiautomator2-driver": "^2.45.1"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
