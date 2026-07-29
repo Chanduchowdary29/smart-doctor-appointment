@@ -31,3 +31,15 @@ jobs:
     - name: Install Appium Testing Dependencies
       run: npm install
       working-directory: ./testing/appium-tests
+
+    - name: Run Selenium E2E Tests
+      run: npm test
+      working-directory: ./testing/hospiq-selenium-tests
+      env:
+        CI: true
+
+    - name: Run Appium Mobile E2E Tests
+      run: npm test
+      working-directory: ./testing/appium-tests
+      env:
+        CI: true

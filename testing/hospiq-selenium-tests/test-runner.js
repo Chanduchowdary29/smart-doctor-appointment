@@ -31,7 +31,14 @@ function sanitize(str) {
 async function buildDriver() {
   const opts = new chrome.Options();
   (config.chromeOptions.args || []).forEach(a => opts.addArguments(a));
-  // NO headless — live visible Chrome
+  
+  // Headless mode for CI/CD or explicit environment variable
+  if (process.env.CI === 'true' || process.env.HEADLESS === 'true') {
+    opts.addArguments('--headless=new');
+    opts.addArguments('--disable-gpu');
+    opts.addArguments('--window-size=1280,800');
+  }
+
   const driver = await new Builder()
     .forBrowser('chrome')
     .setChromeOptions(opts)
