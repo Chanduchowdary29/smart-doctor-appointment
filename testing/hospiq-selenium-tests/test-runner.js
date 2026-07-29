@@ -35,6 +35,8 @@ async function buildDriver() {
   // Headless mode for CI/CD or explicit environment variable
   if (process.env.CI === 'true' || process.env.HEADLESS === 'true') {
     opts.addArguments('--headless=new');
+    opts.addArguments('--no-sandbox');
+    opts.addArguments('--disable-dev-shm-usage');
     opts.addArguments('--disable-gpu');
     opts.addArguments('--window-size=1280,800');
   }
