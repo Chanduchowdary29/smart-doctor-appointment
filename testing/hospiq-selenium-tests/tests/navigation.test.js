@@ -111,11 +111,12 @@ module.exports = {
         const images = await driver.findElements(By.css('img'));
         let broken = 0;
         for (const img of images) {
+          const src = await img.getAttribute('src');
           const complete = await driver.executeScript('return arguments[0].complete', img);
           const naturalW = await driver.executeScript('return arguments[0].naturalWidth', img);
           // Images with onerror handlers hide themselves, so check if displayed
           const displayed = await img.isDisplayed().catch(() => false);
-          if (displayed && complete && naturalW === 0) broken++;
+          if (src && displayed && complete && naturalW === 0) broken++;
         }
         console.log(`  ${images.length} images checked, ${broken} broken`);
         // Allow 0 broken for pass
