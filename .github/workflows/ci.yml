@@ -22,7 +22,9 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-        # Removed global npm cache to prevent errors since there is no package.json in the root directory
+
+    - name: Set up Chrome
+      uses: browser-actions/setup-chrome@v1
 
     - name: Install Selenium Testing Dependencies
       run: npm install
